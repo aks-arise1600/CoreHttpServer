@@ -17,6 +17,7 @@ HTTP_Handler::HTTP_Handler(QObject *parent)
 {
     m_processRequest();
     obj_svr.listen("0.0.0.0", 8190);
+
 }
 /**
  * @brief m_ResultRequestedData
@@ -90,10 +91,22 @@ void HTTP_Handler::m_processRequest()
 {
     obj_svr.Get("/", [](const httplib::Request& req, httplib::Response& res)
     {
+        QString tmp = "<!DOCTYPE html> \
+                <html lang=\"en\"> \
+                <body> \
+                <h1>Core HTTP Server </h1> \
+                <p>For more use : ADD/MULTI/Details .</p> \
+                </body>\
+                </html>";
+        res.set_content(tmp.toStdString(),"text/html");
+    });
+
+
+    obj_svr.Get("/maths", [](const httplib::Request& req, httplib::Response& res)
+    {
         std::multimap<std::string, std::string> req_Params = req.params;
         QString t_Key, t_Values;
         for (const auto& [key, value] : req_Params) {
-                std::cout << key << " => " << value << std::endl;
                 t_Key = QString::fromStdString(key);
                 t_Values = QString::fromStdString(value);
                 qDebug()<< t_Key <<" -> " <<t_Values;
@@ -118,5 +131,40 @@ void HTTP_Handler::m_processRequest()
         res.set_content(str_response.toStdString(),"text/xml");
 
     });
+
+
+    obj_svr.Get("/Details", [](const httplib::Request& req, httplib::Response& res)
+    {
+        Q_UNUSED(req)
+        QProcess *objProcess = new QProcess;
+        auto os = QOperatingSystemVersion::currentType();
+        QByteArray res_data;
+        QString cmd;
+        QStringList args;
+
+        switch (os)
+        {
+        case QOperatingSystemVersion::Windows:
+            qDebug() << "Runtime OS: Windows";
+            cmd = "systeminfo";
+            objProcess->start(cmd,args);
+            objProcess->waitForFinished();
+            res_data = objProcess->readAllStandardOutput();
+            res.set_content(res_data.toStdString(),"text/plain");
+            break;
+        default:
+            qDebug() << "Runtime OS: LINUX";
+            cmd = "lshw";
+            args << "-html";
+            objProcess->start(cmd,args);
+            objProcess->waitForFinished();
+            res_data = objProcess->readAllStandardOutput();
+            res.set_content(res_data.toStdString(),"text/html");
+            break;
+        }
+
+        delete objProcess;
+    });
+
 
 }

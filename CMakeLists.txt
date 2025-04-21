@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
+message(STATUS "CMake version: ${CMAKE_VERSION}")
 
 project(CoreHttpServer
   VERSION
@@ -9,7 +10,7 @@ project(CoreHttpServer
     CXX
 )
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
@@ -40,4 +41,3 @@ add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
 add_definitions(-DQT_NO_VERSION_TAGGING)
 
 target_link_libraries(${PROJECT_NAME} Qt5::Network Qt5::Core)
-#qt5_use_modules(${PROJECT_NAME} Core Network)

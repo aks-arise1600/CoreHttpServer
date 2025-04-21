@@ -10,6 +10,8 @@
 #include <QObject>
 #include "httplib.h"
 #include "QDebug"
+#include "QProcess"
+#include "QOperatingSystemVersion"
 
 class HTTP_Handler : public QObject
 {

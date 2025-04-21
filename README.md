@@ -26,7 +26,12 @@ comiple with anyone (Cmake/Qmake)
 
 		./CoreHttpServer
 		
-* Open web-browser http://localhost:8190/?xyz
+* Open web-browser http://localhost:8190/ or http://localhost:8190/maths?
+
+## Home Page
+
+![alt text](https://github.com/aks-arise1600/CoreHttpServer/blob/main/docs/Screenshots/Screenshot000.png?raw=true)
+
 
 ## ADDITION EXAMPLE
 

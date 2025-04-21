@@ -1,7 +1,7 @@
 QT += core network
 QT -= gui
 
-CONFIG += c++11
+CONFIG += c++17
 
 TARGET = CoreHttpServer
 CONFIG -= app_bundle
