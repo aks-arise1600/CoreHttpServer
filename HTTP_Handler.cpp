@@ -51,7 +51,7 @@ void HTTP_Handler::m_Start()
 {
     qDebug()<<"Starting HTTP Server (HTTP). ";
 
-    int port ;//= 8190;
+    int port = 8190;
     const char* env_p = std::getenv("PORT");
     if (env_p) port = std::stoi(env_p);
     std::cout << "Listening on port: " << port << std::endl;
@@ -104,7 +104,7 @@ void HTTP_Handler::m_StartSecure()
         return true;
     };
 
-    int port ;//= 8193;
+    int port = 8193;
     const char* env_p = std::getenv("PORTS");
     if (env_p) port = std::stoi(env_p);
     std::cout << "Listening on port: " << port << std::endl;
