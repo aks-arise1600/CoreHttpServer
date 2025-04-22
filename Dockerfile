@@ -25,7 +25,7 @@ RUN mkdir build && cd build && cmake .. && make
 
 
 # Expose the port your app listens on
-EXPOSE 8190
+EXPOSE 8080
 #EXPOSE 8193
 
 # Run the server
