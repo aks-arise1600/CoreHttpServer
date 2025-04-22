@@ -51,8 +51,15 @@ void HTTP_Handler::m_Start()
 {
     qDebug()<<"Starting HTTP Server (HTTP). ";
 
+    int port = 8190;
+    const char* env_p = std::getenv("PORT");
+    if (env_p) port = std::stoi(env_p);
+    std::cout << "Listening on port: " << port << std::endl;
+
+
+    obj_svr = std::unique_ptr<httplib::Server>();
     m_processRequest();
-    obj_svr.listen("0.0.0.0", 8190);
+    obj_svr->listen("0.0.0.0", port);
 }
 
 void HTTP_Handler::m_StartSecure()
@@ -189,13 +196,13 @@ QString m_ResultRequestedData(int indx, bool isExist, QString tt_Values)
  */
 void HTTP_Handler::m_processRequest()
 {
-    obj_svr.Get("/", [](const httplib::Request& req, httplib::Response& res)
+    obj_svr->Get("/", [](const httplib::Request& req, httplib::Response& res)
     {
         res.set_content(tmp_html.toStdString(),"text/html");
     });
 
 
-    obj_svr.Get("/maths", [](const httplib::Request& req, httplib::Response& res)
+    obj_svr->Get("/maths", [](const httplib::Request& req, httplib::Response& res)
     {
         std::multimap<std::string, std::string> req_Params = req.params;
         QString t_Key, t_Values;
@@ -224,7 +231,7 @@ void HTTP_Handler::m_processRequest()
         res.set_content(str_response.toStdString(),"text/xml");
     });
 
-    obj_svr.Get("/Details", [](const httplib::Request& req, httplib::Response& res)
+    obj_svr->Get("/Details", [](const httplib::Request& req, httplib::Response& res)
     {
         Q_UNUSED(req)
         QProcess *objProcess = new QProcess;

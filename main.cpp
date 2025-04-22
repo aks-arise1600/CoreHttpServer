@@ -13,8 +13,8 @@ int main()
 {
     qDebug() << "STARTING HTTP SERVER !";
     HTTP_Handler obj;
-    //obj.m_Start();
-    obj.m_StartSecure();
+    obj.m_Start();
+//    obj.m_StartSecure();
 
     return 0;
 }

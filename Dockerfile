@@ -27,7 +27,8 @@ RUN make
 
 
 # Expose the port your app listens on
-EXPOSE 8193
+EXPOSE 8190
+#EXPOSE 8193
 
 # Run the server
 CMD ["./CoreHttpServer"]
