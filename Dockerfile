@@ -21,9 +21,7 @@ WORKDIR /app
 COPY . .
 
 # Build your app
-RUN cmake .
-
-RUN make
+RUN mkdir build && cd build && cmake .. && make
 
 
 # Expose the port your app listens on
