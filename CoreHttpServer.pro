@@ -17,3 +17,10 @@ SOURCES += main.cpp \
 HEADERS += \
     httplib.h \
     HTTP_Handler.h
+    
+DEFINES += CPPHTTPLIB_OPENSSL_SUPPORT
+
+RESOURCES += \
+    resources.qrc
+    
+LIBS += -lssl -lcrypto

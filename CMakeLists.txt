@@ -25,6 +25,15 @@ else()
     message(FATAL_ERROR "Qt5 not Found !!")
 endif()
 
+find_package(OpenSSL REQUIRED)
+if(OpenSSL_FOUND)
+    message(STATUS "Found OpenSSL: ${OPENSSL_VERSION}")
+else()
+    message(FATAL_ERROR "OpenSSL not found!")
+endif()
+
+add_definitions(-DCPPHTTPLIB_OPENSSL_SUPPORT)
+
 
 set(SRC_FILES
                 main.cpp
@@ -36,8 +45,14 @@ set(HEADER_FILES
                 HTTP_Handler.h
                 )
 
+set(QRC_FILES
+                resources.qrc
+                )
 
-add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
+
+add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES} ${QRC_FILES})
 add_definitions(-DQT_NO_VERSION_TAGGING)
 
 target_link_libraries(${PROJECT_NAME} Qt5::Network Qt5::Core)
+target_link_libraries(${PROJECT_NAME} ssl crypto)
+
