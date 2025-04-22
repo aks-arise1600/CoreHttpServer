@@ -7,7 +7,8 @@ RUN apt-get update && \
     g++ cmake make curl wget git && \
     apt-get clean
 
-RUN apt-get install -y build-essential make cmake qtbase5-dev qt5-qmake git
+RUN apt-get install -y build-essential make cmake \
+    qtbase5-dev qt5-qmake git libssl-dev
 
 # Set working dir
 WORKDIR /app
