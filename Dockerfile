@@ -1,5 +1,5 @@
 # Use Ubuntu as base
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Install build tools
 RUN apt-get update && \
