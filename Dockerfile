@@ -1,5 +1,5 @@
 # Use Ubuntu as base
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 
 # Install build tools
 RUN apt-get update && \
@@ -7,8 +7,7 @@ RUN apt-get update && \
     g++ cmake make curl wget git && \
     apt-get clean
 
-RUN apt-get install -y build-essential make cmake \
-    qtbase5-dev qt5-qmake git libssl-dev
+RUN apt-get install -y build-essential make cmake qtbase5-dev qt5-qmake git libssl-dev
 
 # Set working dir
 WORKDIR /app
@@ -23,7 +22,7 @@ RUN make
 
 
 # Expose the port your app listens on
-EXPOSE 8193
+EXPOSE 8190
 
 # Run the server
 CMD ["./CoreHttpServer"]
