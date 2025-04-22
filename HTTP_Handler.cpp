@@ -97,9 +97,15 @@ void HTTP_Handler::m_StartSecure()
         return true;
     };
 
+    int port = 8193;
+    const char* env_p = std::getenv("PORT");
+    if (env_p) port = std::stoi(env_p);
+    std::cout << "Listening on port: " << port << std::endl;
+
+
     obj_Secure_svr = std::make_unique<httplib::SSLServer>(setup_ssl);
     m_processRequest_secure();
-    obj_Secure_svr->listen("0.0.0.0", 8193);
+    obj_Secure_svr->listen("0.0.0.0", port);
 
 }
 
