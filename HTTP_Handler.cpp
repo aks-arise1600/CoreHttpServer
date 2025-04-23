@@ -123,7 +123,7 @@ QString m_ResultRequestedData(int indx, bool isExist, QString tt_Values)
                 else if(tt_Values.contains("+"))
                     Number_data = tt_Values.split('+');
 
-                int sum = 0;
+                long sum = 0;
                 foreach(QString n_data, Number_data)
                     sum += n_data.toInt();
                 r_send_Data = "<mData><msg>REQUEST OK</msg><Result>"+QString::number(sum)+"</Result></mData>";
@@ -144,7 +144,7 @@ QString m_ResultRequestedData(int indx, bool isExist, QString tt_Values)
                 else if(tt_Values.contains("*"))
                     Num_data = tt_Values.split('*');
 
-                int multi = 1;
+                long multi = 1;
                 foreach(QString n_data, Num_data)
                     multi *= n_data.toInt();
                 r_send_Data = "<mData><msg>REQUEST OK</msg><Result>"+QString::number(multi)+"</Result></mData>";
