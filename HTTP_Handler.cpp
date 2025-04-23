@@ -170,6 +170,12 @@ void HTTP_Handler::m_processRequest()
     {
         Q_UNUSED(req)
         qDebug() <<PRINT_D("m_processRequest") <<"root requests ---";
+        QString client_ip = QString::fromStdString(req.remote_addr);
+        QString user_agent = QString::fromStdString (req.get_header_value("User-Agent"));
+
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"client_ip = "<<client_ip;
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"user_agent = "<<user_agent;
+
         res.set_content(tmp_html.toStdString(),"text/html");
     });
 
@@ -285,8 +291,13 @@ void HTTP_Handler::m_processRequest_secure()
 {
     obj_Secure_svr->Get("/", [](const httplib::Request& req, httplib::Response& res)
     {
-        Q_UNUSED(req)
         qDebug() <<PRINT_D("m_processRequest_secure") <<"root requests ---";
+        QString client_ip = QString::fromStdString(req.remote_addr);
+        QString user_agent = QString::fromStdString (req.get_header_value("User-Agent"));
+
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"client_ip = "<<client_ip;
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"user_agent = "<<user_agent;
+
         res.set_content(tmp_html.replace("HTTP ","HTTPS ").toStdString(),"text/html");
     });
 
