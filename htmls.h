@@ -41,10 +41,13 @@ QString warning_html = R"(
   <title>Warnings and Alerts </title>
   <style>
     .warning-box {
+      width: 600px;
+      margin: 30px auto;
       background-color: red;
       color: white;
       padding: 20px;
       border: 2px solid darkred;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
       text-align: center;
       font-weight: bold;
       font-size: 1.5em;
