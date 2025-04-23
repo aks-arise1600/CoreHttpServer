@@ -171,9 +171,14 @@ void HTTP_Handler::m_processRequest()
         Q_UNUSED(req)
         qDebug() <<PRINT_D("m_processRequest") <<"root requests ---";
         QString client_ip = QString::fromStdString(req.remote_addr);
+        QString client_ip1 = QString::fromStdString (req.has_header("X-Forwarded-For")
+                                ? req.get_header_value("X-Forwarded-For")
+                                : req.remote_addr);
+
         QString user_agent = QString::fromStdString (req.get_header_value("User-Agent"));
 
         qDebug() <<PRINT_D("m_processRequest_secure") <<"client_ip = "<<client_ip;
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"client_ip_ = "<<client_ip1;
         qDebug() <<PRINT_D("m_processRequest_secure") <<"user_agent = "<<user_agent;
 
         res.set_content(tmp_html.toStdString(),"text/html");
@@ -294,9 +299,13 @@ void HTTP_Handler::m_processRequest_secure()
         qDebug() <<PRINT_D("m_processRequest_secure") <<"root requests ---";
         QString client_ip = QString::fromStdString(req.remote_addr);
         QString user_agent = QString::fromStdString (req.get_header_value("User-Agent"));
+        QString client_ip1 = QString::fromStdString (req.has_header("X-Forwarded-For")
+                                ? req.get_header_value("X-Forwarded-For")
+                                : req.remote_addr);
 
         qDebug() <<PRINT_D("m_processRequest_secure") <<"client_ip = "<<client_ip;
         qDebug() <<PRINT_D("m_processRequest_secure") <<"user_agent = "<<user_agent;
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"client_ip1 = "<<client_ip1;
 
         res.set_content(tmp_html.replace("HTTP ","HTTPS ").toStdString(),"text/html");
     });
