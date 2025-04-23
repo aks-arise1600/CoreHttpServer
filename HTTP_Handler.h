@@ -26,12 +26,9 @@ public:
 signals:
 private:
     QByteArray m_loadResource(const QString &resourcePath);
-//    httplib::Server obj_svr; // http
-    std::unique_ptr<httplib::Server> obj_svr;
-    const char* cert_path = "server.crt";
-    const char* private_key_path = "server.key";
-//    httplib::SSLServer *obj_Secure_svr;//(cert_path, private_key_path,,,); // https
-    std::unique_ptr<httplib::SSLServer> obj_Secure_svr;
+    httplib::Server obj_svr; // http
+//    std::unique_ptr<httplib::Server> obj_svr;
+    std::unique_ptr<httplib::SSLServer> obj_Secure_svr; //https
     void m_processRequest();
     void m_processRequest_secure();
 };

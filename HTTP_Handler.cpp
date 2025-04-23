@@ -5,37 +5,7 @@
 * @brief HTTP_Handler class has Responsible to start HTTP Server and Handles requests.
 */
 #include "HTTP_Handler.h"
-
-QString tmp_html = R"(
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <style>
-        .box {
-            width: 300px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 2px solid #333;
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <div class="box">
-        <h2>Core HTTP Server</h2>
-        <h4>Version 1.0</h4>
-        <p>For more use: ADD / MULTI / Details.</p>
-    </div>
-</body>
-</html>
-)";
-
-QStringList def_params = {"ADD","MULTI"};
-bool isReplied = false;
-
+#include "htmls.h"
 
 /**
  * @brief HTTP_Handler::HTTP_Handler
@@ -57,9 +27,9 @@ void HTTP_Handler::m_Start()
     std::cout << "Listening on port: " << port << std::endl;
 
 
-    obj_svr = std::unique_ptr<httplib::Server>();
+    //obj_svr = std::unique_ptr<httplib::Server>();
     m_processRequest();
-    obj_svr->listen("0.0.0.0", port);
+    obj_svr.listen("0.0.0.0", port);
 }
 
 void HTTP_Handler::m_StartSecure()
@@ -104,8 +74,8 @@ void HTTP_Handler::m_StartSecure()
         return true;
     };
 
-    int port = 8193;
-    const char* env_p = std::getenv("PORT");
+    int port = 8443;
+    const char* env_p = std::getenv("PORTS");
     if (env_p) port = std::stoi(env_p);
     std::cout << "Listening on port: " << port << std::endl;
 
@@ -196,21 +166,25 @@ QString m_ResultRequestedData(int indx, bool isExist, QString tt_Values)
  */
 void HTTP_Handler::m_processRequest()
 {
-    obj_svr->Get("/", [](const httplib::Request& req, httplib::Response& res)
+    obj_svr.Get("/", [](const httplib::Request& req, httplib::Response& res)
     {
+        Q_UNUSED(req)
+        qDebug() <<PRINT_D("m_processRequest") <<"root requests ---";
         res.set_content(tmp_html.toStdString(),"text/html");
     });
 
 
-    obj_svr->Get("/maths", [](const httplib::Request& req, httplib::Response& res)
+    obj_svr.Get("/maths", [](const httplib::Request& req, httplib::Response& res)
     {
+        qDebug() <<PRINT_D("m_processRequest") <<"maths requests ---";
         std::multimap<std::string, std::string> req_Params = req.params;
         QString t_Key, t_Values;
-        for (const auto& [key, value] : req_Params) {
-                t_Key = QString::fromStdString(key);
-                t_Values = QString::fromStdString(value);
-                qDebug()<< t_Key <<" -> " <<t_Values;
-            }
+        for (const auto& [key, value] : req_Params)
+        {
+            t_Key = QString::fromStdString(key);
+            t_Values = QString::fromStdString(value);
+            qDebug() <<PRINT_D("m_processRequest")<< t_Key <<" -> " <<t_Values;
+        }
 
         bool isExist = false;
         int indx_param = 0, found_param_index = -1;
@@ -225,14 +199,16 @@ void HTTP_Handler::m_processRequest()
             indx_param ++;
         }
 
-        qDebug()<< "found_param_index ="<< found_param_index << ",isExist "<<isExist;
+        qDebug() <<PRINT_D("m_processRequest")<< "found_param_index ="<< found_param_index << ",isExist "<<isExist;
 
         QString str_response = m_ResultRequestedData(found_param_index, isExist, t_Values);
         res.set_content(str_response.toStdString(),"text/xml");
     });
 
-    obj_svr->Get("/Details", [](const httplib::Request& req, httplib::Response& res)
+    obj_svr.Get("/Details", [](const httplib::Request& req, httplib::Response& res)
     {
+        qDebug() <<PRINT_D("m_processRequest") <<"Details requests ---";
+
         Q_UNUSED(req)
         QProcess *objProcess = new QProcess;
         auto os = QOperatingSystemVersion::currentType();
@@ -243,7 +219,7 @@ void HTTP_Handler::m_processRequest()
         switch (os)
         {
         case QOperatingSystemVersion::Windows:
-            qDebug() << "Runtime OS: Windows";
+            qDebug() <<PRINT_D("m_processRequest") << "Runtime OS: Windows";
             cmd = "systeminfo";
             objProcess->start(cmd,args);
             objProcess->waitForFinished();
@@ -251,7 +227,7 @@ void HTTP_Handler::m_processRequest()
             res.set_content(res_data.toStdString(),"text/plain");
             break;
         default:
-            qDebug() << "Runtime OS: LINUX";
+            qDebug() <<PRINT_D("m_processRequest") << "Runtime OS: LINUX";
             cmd = "lshw";
             args << "-html";
             objProcess->start(cmd,args);
@@ -262,6 +238,45 @@ void HTTP_Handler::m_processRequest()
         }
 
         delete objProcess;
+    });
+
+    obj_svr.Get("/Warning", [](const httplib::Request& req, httplib::Response& res)
+    {
+        qDebug() <<PRINT_D("m_processRequest") <<"warning requests ---";
+        std::multimap<std::string, std::string> req_Params = req.params;
+        QString t_Key, t_Values;
+        for (const auto& [key, value] : req_Params)
+        {
+            t_Key = QString::fromStdString(key);
+            t_Values = QString::fromStdString(value);
+            qDebug() <<PRINT_D("m_processRequest") << t_Key <<" -> " <<t_Values;
+        }
+
+        QString str_response = warning_html;
+        if(req.has_param("WRNG_ID"))
+        {
+            switch (t_Values.toInt())
+            {
+            case 1:
+                str_response.replace("GEN_MSG","Memory leak detected");
+                break;
+            case 2:
+                str_response.replace("GEN_MSG","System overload detected");
+                break;
+            case 3:
+                str_response.replace("GEN_MSG","System Overheating");
+                break;
+            default:
+                str_response.replace("GEN_MSG","unknown");
+                break;
+            }
+            res.set_content(str_response.toStdString(),"text/html");
+        }
+        else
+        {
+            str_response = m_ResultRequestedData(-1, false, t_Values);
+            res.set_content(str_response.toStdString(),"text/xml");
+        }
     });
 
 }
@@ -270,19 +285,23 @@ void HTTP_Handler::m_processRequest_secure()
 {
     obj_Secure_svr->Get("/", [](const httplib::Request& req, httplib::Response& res)
     {
+        Q_UNUSED(req)
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"root requests ---";
         res.set_content(tmp_html.replace("HTTP ","HTTPS ").toStdString(),"text/html");
     });
 
 
     obj_Secure_svr->Get("/maths", [](const httplib::Request& req, httplib::Response& res)
     {
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"maths requests ---";
         std::multimap<std::string, std::string> req_Params = req.params;
         QString t_Key, t_Values;
-        for (const auto& [key, value] : req_Params) {
-                t_Key = QString::fromStdString(key);
-                t_Values = QString::fromStdString(value);
-                qDebug()<< t_Key <<" -> " <<t_Values;
-            }
+        for (const auto& [key, value] : req_Params)
+        {
+            t_Key = QString::fromStdString(key);
+            t_Values = QString::fromStdString(value);
+            qDebug() <<PRINT_D("m_processRequest_secure")<< t_Key <<" -> " <<t_Values;
+        }
 
         bool isExist = false;
         int indx_param = 0, found_param_index = -1;
@@ -297,7 +316,7 @@ void HTTP_Handler::m_processRequest_secure()
             indx_param ++;
         }
 
-        qDebug()<< "found_param_index ="<< found_param_index << ",isExist "<<isExist;
+        qDebug() <<PRINT_D("m_processRequest_secure")<< "found_param_index ="<< found_param_index << ",isExist "<<isExist;
 
         QString str_response = m_ResultRequestedData(found_param_index, isExist, t_Values);
         res.set_content(str_response.toStdString(),"text/xml");
@@ -305,6 +324,8 @@ void HTTP_Handler::m_processRequest_secure()
 
     obj_Secure_svr->Get("/Details", [](const httplib::Request& req, httplib::Response& res)
     {
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"Details requests ---";
+
         Q_UNUSED(req)
         QProcess *objProcess = new QProcess;
         auto os = QOperatingSystemVersion::currentType();
@@ -315,7 +336,7 @@ void HTTP_Handler::m_processRequest_secure()
         switch (os)
         {
         case QOperatingSystemVersion::Windows:
-            qDebug() << "Runtime OS: Windows";
+            qDebug() <<PRINT_D("m_processRequest_secure") << "Runtime OS: Windows";
             cmd = "systeminfo";
             objProcess->start(cmd,args);
             objProcess->waitForFinished();
@@ -323,7 +344,7 @@ void HTTP_Handler::m_processRequest_secure()
             res.set_content(res_data.toStdString(),"text/plain");
             break;
         default:
-            qDebug() << "Runtime OS: LINUX";
+            qDebug() <<PRINT_D("m_processRequest_secure") << "Runtime OS: LINUX";
             cmd = "lshw";
             args << "-html";
             objProcess->start(cmd,args);
@@ -336,4 +357,42 @@ void HTTP_Handler::m_processRequest_secure()
         delete objProcess;
     });
 
+    obj_Secure_svr->Get("/Warning", [](const httplib::Request& req, httplib::Response& res)
+    {
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"warning requests ---";
+        std::multimap<std::string, std::string> req_Params = req.params;
+        QString t_Key, t_Values;
+        for (const auto& [key, value] : req_Params)
+        {
+            t_Key = QString::fromStdString(key);
+            t_Values = QString::fromStdString(value);
+            qDebug() <<PRINT_D("m_processRequest_secure") << t_Key <<" -> " <<t_Values;
+        }
+
+        QString str_response = warning_html;
+        if(req.has_param("WRNG_ID"))
+        {
+            switch (t_Values.toInt())
+            {
+            case 1:
+                str_response.replace("GEN_MSG","Memory leak detected");
+                break;
+            case 2:
+                str_response.replace("GEN_MSG","System overload detected");
+                break;
+            case 3:
+                str_response.replace("GEN_MSG","System Overheating");
+                break;
+            default:
+                str_response.replace("GEN_MSG","unknown");
+                break;
+            }
+            res.set_content(str_response.toStdString(),"text/html");
+        }
+        else
+        {
+            str_response = m_ResultRequestedData(-1, false, t_Values);
+            res.set_content(str_response.toStdString(),"text/xml");
+        }
+    });
 }

@@ -16,7 +16,8 @@ SOURCES += main.cpp \
 
 HEADERS += \
     httplib.h \
-    HTTP_Handler.h
+    HTTP_Handler.h \
+    htmls.h
     
 DEFINES += CPPHTTPLIB_OPENSSL_SUPPORT
 

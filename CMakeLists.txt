@@ -43,6 +43,7 @@ set(SRC_FILES
 set(HEADER_FILES
                 httplib.h
                 HTTP_Handler.h
+                htmls.h
                 )
 
 set(QRC_FILES
