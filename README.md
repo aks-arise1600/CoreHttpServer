@@ -32,6 +32,7 @@ comiple with anyone (Cmake/Qmake)
 		
 * Open web-browser http://localhost:8190/ or http://localhost:8190/maths?
 * Open web-browser https://localhost:8193/ or https://localhost:8193/maths? 
+* Open web-browser https://corehttpserver.onrender.com/ or https://corehttpserver.onrender.com/maths?MULTI=45,200,800
 
 
 ### To start http
