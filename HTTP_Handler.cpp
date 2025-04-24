@@ -137,13 +137,16 @@ QString m_ResultRequestedData(int indx, bool isExist, QString tt_Values)
                 else if(tt_Values.contains("+"))
                     Number_data = tt_Values.split('+');
 
-                long sum = 0;
+                float sum = 0;
                 foreach(QString n_data, Number_data)
-                    sum += n_data.toInt();
-                r_send_Data = "<mData><msg>REQUEST OK</msg><Result>"+QString::number(sum)+"</Result></mData>";
+                    sum += n_data.toFloat();
+
+                r_send_Data = "<mData><msg>REQUEST OK</msg><Maths><Process-Type>Addition</Process-Type>"
+                              "<Result>"+QString::number(sum,'f',4)+"</Result></Maths></mData>";
             }
             else
-                r_send_Data = "<mData><msg>REQUEST OK</msg><Result>NA</Result></mData>";
+                r_send_Data = "<mData><msg>REQUEST OK</msg>"
+                              "<Maths><Process-Type>Addition</Process-Type><Result>NA</Result></Maths></mData>";
         }
             break;
         case 1:
@@ -158,13 +161,16 @@ QString m_ResultRequestedData(int indx, bool isExist, QString tt_Values)
                 else if(tt_Values.contains("*"))
                     Num_data = tt_Values.split('*');
 
-                long multi = 1;
+                float multi = 1;
                 foreach(QString n_data, Num_data)
-                    multi *= n_data.toInt();
-                r_send_Data = "<mData><msg>REQUEST OK</msg><Result>"+QString::number(multi)+"</Result></mData>";
+                    multi *= n_data.toFloat();
+
+                r_send_Data = "<mData><msg>REQUEST OK</msg><Maths><Process-Type>Multiplication</Process-Type>"
+                              "<Result>"+QString::number(multi,'f',4)+"</Result></Maths></mData>";
             }
             else
-                r_send_Data = "<mData><msg>REQUEST OK</msg><Result>NA</Result></mData>";
+                r_send_Data = "<mData><msg>REQUEST OK</msg><Maths><Process-Type>Multiplication</Process-Type>"
+                              "<Result>NA</Result></Maths></mData>";
         }
             break;
         }
@@ -260,7 +266,7 @@ void HTTP_Handler::m_processRequest()
 
     obj_svr.Get("/Warning", [](const httplib::Request& req, httplib::Response& res)
     {
-        qDebug() <<PRINT_D("m_processRequest") <<"alert requests ---";
+        qDebug() <<PRINT_D("m_processRequest") <<"wrng requests ---";
         m_GetClientDetails(req);
 
         std::multimap<std::string, std::string> req_Params = req.params;
@@ -386,7 +392,7 @@ void HTTP_Handler::m_processRequest_secure()
 
     obj_Secure_svr->Get("/Warning", [](const httplib::Request& req, httplib::Response& res)
     {
-        qDebug() <<PRINT_D("m_processRequest_secure") <<"alert requests ---";
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"wrng requests ---";
         m_GetClientDetails(req);
 
         std::multimap<std::string, std::string> req_Params = req.params;
