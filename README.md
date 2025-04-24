@@ -3,8 +3,8 @@ This is a HTTP Server, It has full of http request controls . It can be use with
 
 ## Dependencies install
 
-			sudo apt-get update
-			sudo apt-get install -y build-essential make cmake qtbase5-dev qt5-qmake git libssl1.0-dev
+		sudo apt-get update
+		sudo apt-get install -y build-essential make cmake qtbase5-dev qt5-qmake git libssl1.0-dev
 
 ## Compile/build and Run
 

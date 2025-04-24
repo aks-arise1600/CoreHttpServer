@@ -96,6 +96,20 @@ QByteArray HTTP_Handler::m_loadResource(const QString& resourcePath)
     return file.readAll();
 }
 
+void m_GetClientDetails(const httplib::Request& req)
+{
+    QString client_ip = QString::fromStdString(req.remote_addr);
+    QString client_ipX = QString::fromStdString (req.has_header("X-Forwarded-For")
+                            ? req.get_header_value("X-Forwarded-For")
+                            : req.remote_addr);
+
+    QString user_agent = QString::fromStdString (req.get_header_value("User-Agent"));
+
+    qDebug() <<PRINT_D("m_GetClientDetails") <<"client_ip = "<<client_ip;
+    qDebug() <<PRINT_D("m_GetClientDetails") <<"client_ipX = "<<client_ipX;
+    qDebug() <<PRINT_D("m_GetClientDetails") <<"user_agent = "<<user_agent;
+}
+
 /**
  * @brief m_ResultRequestedData
  * @param indx
@@ -170,17 +184,7 @@ void HTTP_Handler::m_processRequest()
     {
         Q_UNUSED(req)
         qDebug() <<PRINT_D("m_processRequest") <<"root requests ---";
-        QString client_ip = QString::fromStdString(req.remote_addr);
-        QString client_ip1 = QString::fromStdString (req.has_header("X-Forwarded-For")
-                                ? req.get_header_value("X-Forwarded-For")
-                                : req.remote_addr);
-
-        QString user_agent = QString::fromStdString (req.get_header_value("User-Agent"));
-
-        qDebug() <<PRINT_D("m_processRequest_secure") <<"client_ip = "<<client_ip;
-        qDebug() <<PRINT_D("m_processRequest_secure") <<"client_ip_ = "<<client_ip1;
-        qDebug() <<PRINT_D("m_processRequest_secure") <<"user_agent = "<<user_agent;
-
+        m_GetClientDetails(req);
         res.set_content(tmp_html.toStdString(),"text/html");
     });
 
@@ -188,6 +192,8 @@ void HTTP_Handler::m_processRequest()
     obj_svr.Get("/maths", [](const httplib::Request& req, httplib::Response& res)
     {
         qDebug() <<PRINT_D("m_processRequest") <<"maths requests ---";
+        m_GetClientDetails(req);
+
         std::multimap<std::string, std::string> req_Params = req.params;
         QString t_Key, t_Values;
         for (const auto& [key, value] : req_Params)
@@ -219,6 +225,7 @@ void HTTP_Handler::m_processRequest()
     obj_svr.Get("/Details", [](const httplib::Request& req, httplib::Response& res)
     {
         qDebug() <<PRINT_D("m_processRequest") <<"Details requests ---";
+        m_GetClientDetails(req);
 
         Q_UNUSED(req)
         QProcess *objProcess = new QProcess;
@@ -253,7 +260,9 @@ void HTTP_Handler::m_processRequest()
 
     obj_svr.Get("/Warning", [](const httplib::Request& req, httplib::Response& res)
     {
-        qDebug() <<PRINT_D("m_processRequest") <<"warning requests ---";
+        qDebug() <<PRINT_D("m_processRequest") <<"alert requests ---";
+        m_GetClientDetails(req);
+
         std::multimap<std::string, std::string> req_Params = req.params;
         QString t_Key, t_Values;
         for (const auto& [key, value] : req_Params)
@@ -277,6 +286,9 @@ void HTTP_Handler::m_processRequest()
             case 3:
                 str_response.replace("GEN_MSG","System Overheating");
                 break;
+            case 4:
+                str_response.replace("GEN_MSG","Malware detected");
+                break;
             default:
                 str_response.replace("GEN_MSG","unknown");
                 break;
@@ -297,15 +309,7 @@ void HTTP_Handler::m_processRequest_secure()
     obj_Secure_svr->Get("/", [](const httplib::Request& req, httplib::Response& res)
     {
         qDebug() <<PRINT_D("m_processRequest_secure") <<"root requests ---";
-        QString client_ip = QString::fromStdString(req.remote_addr);
-        QString user_agent = QString::fromStdString (req.get_header_value("User-Agent"));
-        QString client_ip1 = QString::fromStdString (req.has_header("X-Forwarded-For")
-                                ? req.get_header_value("X-Forwarded-For")
-                                : req.remote_addr);
-
-        qDebug() <<PRINT_D("m_processRequest_secure") <<"client_ip = "<<client_ip;
-        qDebug() <<PRINT_D("m_processRequest_secure") <<"user_agent = "<<user_agent;
-        qDebug() <<PRINT_D("m_processRequest_secure") <<"client_ip1 = "<<client_ip1;
+        m_GetClientDetails(req);
 
         res.set_content(tmp_html.replace("HTTP ","HTTPS ").toStdString(),"text/html");
     });
@@ -314,6 +318,8 @@ void HTTP_Handler::m_processRequest_secure()
     obj_Secure_svr->Get("/maths", [](const httplib::Request& req, httplib::Response& res)
     {
         qDebug() <<PRINT_D("m_processRequest_secure") <<"maths requests ---";
+        m_GetClientDetails(req);
+
         std::multimap<std::string, std::string> req_Params = req.params;
         QString t_Key, t_Values;
         for (const auto& [key, value] : req_Params)
@@ -345,6 +351,7 @@ void HTTP_Handler::m_processRequest_secure()
     obj_Secure_svr->Get("/Details", [](const httplib::Request& req, httplib::Response& res)
     {
         qDebug() <<PRINT_D("m_processRequest_secure") <<"Details requests ---";
+        m_GetClientDetails(req);
 
         Q_UNUSED(req)
         QProcess *objProcess = new QProcess;
@@ -379,7 +386,9 @@ void HTTP_Handler::m_processRequest_secure()
 
     obj_Secure_svr->Get("/Warning", [](const httplib::Request& req, httplib::Response& res)
     {
-        qDebug() <<PRINT_D("m_processRequest_secure") <<"warning requests ---";
+        qDebug() <<PRINT_D("m_processRequest_secure") <<"alert requests ---";
+        m_GetClientDetails(req);
+
         std::multimap<std::string, std::string> req_Params = req.params;
         QString t_Key, t_Values;
         for (const auto& [key, value] : req_Params)
@@ -402,6 +411,9 @@ void HTTP_Handler::m_processRequest_secure()
                 break;
             case 3:
                 str_response.replace("GEN_MSG","System Overheating");
+                break;
+            case 4:
+                str_response.replace("GEN_MSG","Malware detected");
                 break;
             default:
                 str_response.replace("GEN_MSG","unknown");
