@@ -17,7 +17,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Core Network)
+find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(PkgConfig REQUIRED)
 
 if(Qt5_FOUND)
     message(STATUS "${PROJECT_NAME} Found Qt5 version: ${Qt5_VERSION}")
