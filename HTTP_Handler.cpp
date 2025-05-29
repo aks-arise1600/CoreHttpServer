@@ -90,7 +90,7 @@ QByteArray HTTP_Handler::m_loadResource(const QString& resourcePath)
 {
     QFile file(resourcePath);
     if (!file.open(QIODevice::ReadOnly)) {
-        qCritical() << "Failed to load resource:" << resourcePath;
+        qCritical() <<PRINT_D("m_loadResource") << "Failed to load resource:" << resourcePath;
         return QByteArray();
     }
     return file.readAll();
@@ -192,6 +192,24 @@ void HTTP_Handler::m_processRequest()
         qDebug() <<PRINT_D("m_processRequest") <<"root requests ---";
         m_GetClientDetails(req);
         res.set_content(tmp_html.toStdString(),"text/html");
+    });
+
+    obj_svr.Get("/Alerts", [](const httplib::Request& req, httplib::Response& res)
+    {
+        Q_UNUSED(req)
+        qDebug() <<PRINT_D("m_processRequest") <<"Alerts requests ---";
+        m_GetClientDetails(req);
+
+        std::multimap<std::string, std::string> req_Params = req.params;
+        QString t_Key, t_Values;
+        for (const auto& [key, value] : req_Params)
+        {
+            t_Key = QString::fromStdString(key);
+            t_Values = QString::fromStdString(value);
+            qDebug() <<PRINT_D("m_processRequest")<< t_Key <<" -> " <<t_Values;
+        }
+
+        res.set_content("ACK OK","text/html");
     });
 
 
