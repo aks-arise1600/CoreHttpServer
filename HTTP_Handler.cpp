@@ -194,7 +194,7 @@ void HTTP_Handler::m_processRequest()
         res.set_content(tmp_html.toStdString(),"text/html");
     });
 
-    obj_svr.Get("/Alerts", [](const httplib::Request& req, httplib::Response& res)
+    obj_svr.Get("/SendAlert", [](const httplib::Request& req, httplib::Response& res)
     {
         Q_UNUSED(req)
         qDebug() <<PRINT_D("m_processRequest") <<"Alerts requests ---";
@@ -338,7 +338,7 @@ void HTTP_Handler::m_processRequest_secure()
         res.set_content(tmp_html.replace("HTTP ","HTTPS ").toStdString(),"text/html");
     });
 
-    obj_svr.Get("/Alerts", [](const httplib::Request& req, httplib::Response& res)
+    obj_svr.Get("/SendAlert", [](const httplib::Request& req, httplib::Response& res)
     {
         Q_UNUSED(req)
         qDebug() <<PRINT_D("m_processRequest") <<"Alerts requests ---";
