@@ -212,6 +212,27 @@ void HTTP_Handler::m_processRequest()
         res.set_content("ACK OK","text/html");
     });
 
+    obj_svr.Get("/ClearAlert", [](const httplib::Request& req, httplib::Response& res)
+    {
+        Q_UNUSED(req)
+        qDebug() <<PRINT_D("m_processRequest") <<"clearAlerts requests ---";
+        m_GetClientDetails(req);
+
+        std::multimap<std::string, std::string> req_Params = req.params;
+        QString t_Key, t_Values;
+        int iAlerts = 0;
+        for (const auto& [key, value] : req_Params)
+        {
+            t_Key = QString::fromStdString(key);
+            t_Values = QString::fromStdString(value);
+            qDebug() <<PRINT_D("m_processRequest")<< t_Key <<" -> " <<t_Values;
+            iAlerts++;
+        }
+        if(iAlerts)
+            res.set_content("ACK OK CLEAR","text/html");
+        else
+            res.set_content("Clear Found !","text/html");
+    });
 
     obj_svr.Get("/maths", [](const httplib::Request& req, httplib::Response& res)
     {
@@ -346,14 +367,40 @@ void HTTP_Handler::m_processRequest_secure()
 
         std::multimap<std::string, std::string> req_Params = req.params;
         QString t_Key, t_Values;
+        int iAlerts = 0;
         for (const auto& [key, value] : req_Params)
         {
             t_Key = QString::fromStdString(key);
             t_Values = QString::fromStdString(value);
             qDebug() <<PRINT_D("m_processRequest")<< t_Key <<" -> " <<t_Values;
+            iAlerts++;
         }
+        if(iAlerts)
+            res.set_content("ACK OK","text/html");
+        else
+            res.set_content("No Alerts Found !","text/html");
+    });
 
-        res.set_content("ACK OK","text/html");
+    obj_svr.Get("/ClearAlert", [](const httplib::Request& req, httplib::Response& res)
+    {
+        Q_UNUSED(req)
+        qDebug() <<PRINT_D("m_processRequest") <<"clearAlerts requests ---";
+        m_GetClientDetails(req);
+
+        std::multimap<std::string, std::string> req_Params = req.params;
+        QString t_Key, t_Values;
+        int iAlerts = 0;
+        for (const auto& [key, value] : req_Params)
+        {
+            t_Key = QString::fromStdString(key);
+            t_Values = QString::fromStdString(value);
+            qDebug() <<PRINT_D("m_processRequest")<< t_Key <<" -> " <<t_Values;
+            iAlerts++;
+        }
+        if(iAlerts)
+            res.set_content("ACK OK CLEAR","text/html");
+        else
+            res.set_content("Clear Found !","text/html");
     });
 
 
